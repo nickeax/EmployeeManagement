@@ -10,5 +10,10 @@
       "library": "jquery@3.5.1",
       "destination": "wwwroot/lib/jquery/"
     }
-  ]
+  ,
+{
+  "library": "jquery@3.5.1",
+  "destination": "wwwroot/lib/jquery/"
+}
+]
 }
