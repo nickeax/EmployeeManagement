@@ -49,14 +49,7 @@ namespace EmployeeManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                string uniqueFileName = null;
-                if(model.Photo != null)
-                {
-                    string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "images");
-                    uniqueFileName = $"{Guid.NewGuid().ToString()}_{model.Photo.FileName}";
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                    model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
-                }
+                string uniqueFileName = ProcessUploadedFile(model);
                 Employee newEmployee = new Employee
                 {
                     Name = model.Name,
@@ -70,6 +63,64 @@ namespace EmployeeManagement.Controllers
             }
 
             return View();
+        }
+
+        [HttpGet]
+        public ViewResult Edit(int id)
+        {
+            Employee employee = _employeeRepository.GetEmployee(id);
+
+            EmployeeEditViewModel employeeEditViewModel = new EmployeeEditViewModel
+            {
+                Id = employee.Id,
+                Name = employee.Name,
+                Email = employee.Email,
+                Department = employee.Department,
+                ExistingPhotoPath = employee.PhotoPath
+            };
+
+            return View(employeeEditViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(EmployeeEditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                Employee emp = _employeeRepository.GetEmployee(model.Id);
+                emp.Name = model.Name;
+                emp.Email = model.Email;
+                emp.Department = model.Department;
+                if (model.Photo != null)
+                {
+                    if(model.ExistingPhotoPath != null)
+                    {
+                        var imageToDelete = Path.Combine(_hostingEnvironment.WebRootPath, "images", model.ExistingPhotoPath);
+                        System.IO.File.Delete(imageToDelete);
+                    }
+                    emp.PhotoPath = ProcessUploadedFile(model);
+                }
+
+                _employeeRepository.Update(emp);
+
+                return RedirectToAction("Details", new { id = model.Id });
+            }
+
+            return View();
+        }
+
+        private string ProcessUploadedFile(EmployeeCreateViewModel model)
+        {
+            string uniqueFileName = null;
+            if (model.Photo != null)
+            {
+                string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "images");
+                uniqueFileName = $"{Guid.NewGuid().ToString()}_{model.Photo.FileName}";
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                model.Photo.CopyTo(new FileStream(filePath, FileMode.Create));
+            }
+
+            return uniqueFileName;
         }
     }
 }

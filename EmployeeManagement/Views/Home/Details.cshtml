@@ -13,7 +13,7 @@
         </div>
 
         <div>
-            <img class="card-img-top" src="@photoPath" alt="Employee @Model.Employee.Name image." asp-append-version="true" />
+            <img class="card-img-top imageThumbnail" src="@photoPath" alt="Employee @Model.Employee.Name image." asp-append-version="true" />
 
             <h4>Employee ID: @Model.Employee.Id</h4>
             <h4>Email: @Model.Employee.Email</h4>
@@ -22,7 +22,8 @@
 
         <div class="card-footer text-center">
             <a asp-controller="home" asp-action="index" class="btn btn-primary">Back</a>
-            <a href="#" class="btn btn-primary">Edit</a>
+            
+            <a class="btn btn-primary" asp-action="Edit" asp-controller="Home" asp-route-id="@Model.Employee.Id">Edit</a>
             <a href="#" class="btn btn-danger">Delete</a>
         </div>
 
