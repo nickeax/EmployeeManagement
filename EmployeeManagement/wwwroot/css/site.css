@@ -6,3 +6,8 @@
     height: 200px;
     width: auto;
 }
+
+.highlightBox {
+    border: 1px solid black;
+    padding: 2px;
+}
