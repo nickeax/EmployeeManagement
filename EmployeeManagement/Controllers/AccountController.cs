@@ -55,8 +55,27 @@ namespace EmployeeManagement.Controllers
             return RedirectToAction("index", "home");
         }
 
-        // LOGIN: First display a form to capture ViewModel data
-        // Process the captured data via a POST version of the login Action
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("index", "home");
+                }
+
+                ModelState.AddModelError(string.Empty, "Login failed.");
+            }
+            return View(model);
+        }
     }
 }
