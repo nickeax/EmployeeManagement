@@ -16,7 +16,7 @@ namespace EmployeeManagement
 {
     public class Startup
     {
-        private IConfiguration _cb;
+        private readonly IConfiguration _cb;
         public Startup(IConfiguration cb)
         {
             _cb = cb;
@@ -43,10 +43,12 @@ namespace EmployeeManagement
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                //app.UseStatusCodePagesWithRedirects("/Error/{0}");
             }
             else
             {
-                app.UseStatusCodePagesWithRedirects("/Error/{0}");
+                app.UseExceptionHandler("/Error/{0}");
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
             }
 
             //app.UseRouting();
