@@ -31,7 +31,7 @@ namespace EmployeeManagement.Controllers
             if (ModelState.IsValid)
             {
                 var user = new IdentityUser
-                { UserName = model.Email,  Email = model.Email };
+                { UserName = model.Email, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
@@ -47,5 +47,16 @@ namespace EmployeeManagement.Controllers
             }
             return View(model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("index", "home");
+        }
+
+        // LOGIN: First display a form to capture ViewModel data
+        // Process the captured data via a POST version of the login Action
+
     }
 }
