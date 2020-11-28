@@ -49,8 +49,7 @@
             <h5 class="card-header">No users in this role.</h5>
         }
         <div class="card-footer">
-            <a asp-action="AddUserToRole" asp-controller="Administration" class="btn btn-primary">Add Users</a>
-            <a asp-action="RemoveUserFromRole" asp-controller="Administration" class="btn btn-primary">Remove Users</a>
+            <a asp-action="EditUsersInRole" asp-controller="Administration" asp-route-roleId="@Model.Id" class="btn btn-primary auto-width" style="width:auto">Add/Remove Users</a>
         </div>
     </div>
 </form>
