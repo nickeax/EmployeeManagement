@@ -40,6 +40,11 @@ namespace EmployeeManagement.Controllers
 
                 if (result.Succeeded)
                 {
+                    if(_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    {
+                        return RedirectToAction("List Users", "Administration");
+                    }
+
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("index", "home");
                 }
@@ -99,6 +104,13 @@ namespace EmployeeManagement.Controllers
                 ModelState.AddModelError(string.Empty, "Login failed.");
             }
             return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }
