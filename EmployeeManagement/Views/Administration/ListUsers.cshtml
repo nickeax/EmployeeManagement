@@ -13,16 +13,18 @@
     foreach (var user in Model)
     {
         <div class="card mb-3">
-            <div class="card-header" disa>
+            <div class="card-header" disabled>
                 User Id: @user.Id
             </div>
             <div class="card-body">
                 <h5 class="card-title">@user.UserName</h5>
             </div>
-            <div>
-                <a asp-action="EditRole" asp-controller="Administration" asp-route-id="@user.Id" class="btn btn-outline-primary">Edit</a>
-                <a href="#" class="btn btn-danger">Delete</a>
-            </div>
+            <form method="post">
+                <div>
+                    <a asp-action="EditUser" asp-controller="Administration" asp-route-id="@user.Id" class="btn btn-outline-primary">Edit</a>
+                    <button type="submit" asp-action="DeleteUser" asp-all-route-id="@user.Id" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
         </div>
     }
 }

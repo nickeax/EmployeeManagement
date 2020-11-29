@@ -42,7 +42,7 @@ namespace EmployeeManagement.Controllers
                 {
                     if(_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
-                        return RedirectToAction("List Users", "Administration");
+                        return RedirectToAction("ListUsers", "Administration");
                     }
 
                     await _signInManager.SignInAsync(user, isPersistent: false);

@@ -34,6 +34,87 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> EditUser(string Id)
+        {
+            var user = await _userManager.FindByIdAsync(Id);
+
+            if(user == null)
+            {
+                ViewBag.Error = $"Use with Id = {Id} cannot be found";
+                return View("NotFound");
+            }
+
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            EditUserViewModel model = new EditUserViewModel
+            {
+                UserId = user.Id,
+                Name = user.UserName,
+                Email = user.Email,
+                City = user.City,
+                Claims = userClaims.Select(x => x.Value).ToList(),
+                Roles = userRoles
+            };
+
+            return View(model);
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> EditUser(EditUserViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if(user == null)
+            {
+                ViewBag.Error = $"Use with Id = {model.UserId} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                user.Email = model.Email;
+                user.UserName = model.Name;
+                user.City = model.City;
+
+                var result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded) return RedirectToAction("ListUsers");
+
+                foreach (var err in result.Errors)
+                {
+                    ModelState.AddModelError("", err.Description);
+                }
+
+                return View(model);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string Id)
+        {
+            var user = await _userManager.FindByIdAsync(Id);
+
+            if (user == null)
+            {
+                ViewBag.Error = $"User with Id = {Id} cannot be found.";
+
+                return View("NotFound");
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+
+            if (result.Succeeded)
+                return RedirectToAction("ListUsers");
+
+            foreach (var err in result.Errors)
+            {
+                ModelState.AddModelError("", err.Description);
+            }
+
+            return View("ListUsers");
+        }
+
+        [HttpGet]
         public IActionResult CreateRole()
         {
             return View();
