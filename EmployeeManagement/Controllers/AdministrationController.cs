@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,18 +13,20 @@ using System.Threading.Tasks;
 
 namespace EmployeeManagement.Controllers
 {
-    [Authorize(Roles="Admin")]
+    [Authorize(Roles = "Admin")]
     public class AdministrationController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ILogger<AdministrationController> _logger;
 
         public UserManager<ApplicationUser> _userManager { get; }
 
         public AdministrationController(RoleManager<IdentityRole> roleManager,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager, ILogger<AdministrationController> logger)
         {
             _roleManager = roleManager;
             _userManager = userManager;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -38,7 +41,7 @@ namespace EmployeeManagement.Controllers
         {
             var user = await _userManager.FindByIdAsync(Id);
 
-            if(user == null)
+            if (user == null)
             {
                 ViewBag.Error = $"Use with Id = {Id} cannot be found";
                 return View("NotFound");
@@ -59,13 +62,13 @@ namespace EmployeeManagement.Controllers
 
             return View(model);
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
             var user = await _userManager.FindByIdAsync(model.UserId);
 
-            if(user == null)
+            if (user == null)
             {
                 ViewBag.Error = $"Use with Id = {model.UserId} cannot be found";
                 return View("NotFound");
@@ -219,17 +222,28 @@ namespace EmployeeManagement.Controllers
                 return View("NotFound");
             }
 
-            var result = await _roleManager.DeleteAsync(role);
-
-            if (result.Succeeded)
-                return RedirectToAction("ListRoles");
-
-            foreach (var err in result.Errors)
+            try
             {
-                ModelState.AddModelError("", err.Description);
+                var result = await _roleManager.DeleteAsync(role);
+
+                if (result.Succeeded)
+                    return RedirectToAction("ListRoles");
+
+                foreach (var err in result.Errors)
+                {
+                    ModelState.AddModelError("", err.Description);
+                }
+
+                return View("ListRoles");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.role = role.Name;
+                _logger.LogError($"Error deleting role: {ex.Message}");
+                
+                return View("Error");
             }
 
-            return View("ListRoles");
         }
 
         [HttpGet]

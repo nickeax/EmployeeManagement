@@ -1,20 +1,32 @@
-﻿<h3>An error occured whilst processing your request. Our support team has been notified and are working to correct the issue.</h3>
+﻿
+@if (ViewBag.role != null)
+{
+    <h3 class="text-danger">The role <em><strong class="text-info">@ViewBag.role</strong></em> is in use.</h3>
+    <h5 class="text-danger">The role <em><strong class="text-info">@ViewBag.role</strong></em> cannot be deleted as there are users in this role.</h5>
+    <a asp-action="ListRoles" asp-controller="Administration" class="btn btn-info" style="width:auto;">Back</a>
 
-@*<h3>Exception Details:</h3>
-<div class="alert alert-danger">
-    <h5>Exception Path</h5>
-    <hr />
-    <p>@ViewBag.ExeptionDetails</p>
-</div>
+}
+else
+{
 
-<div class="alert alert-danger">
-    <h5>Exception Message</h5>
-    <hr />
-    <p>@ViewBag.ExeptionMessage</p>
-</div>
+    <h3 class="text-warning">An error occured whilst processing your request. Our support team has been notified and are working to correct the issue.</h3>
+    <a asp-action="Index" asp-controller="Home" class="btn btn-info" style="width:auto;">Back Home</a>
+    @*<div class="alert alert-danger">
+            }
+            <h5>Exception Path</h5>
+            <hr />
+            <p>@ViewBag.ExeptionDetails</p>
+        </div>
 
-<div class="alert alert-danger">
-    <h5>Exception Trace</h5>
-    <hr />
-    <p>@ViewBag.StackTrace</p>
-</div>*@
+        <div class="alert alert-danger">
+            <h5>Exception Message</h5>
+            <hr />
+            <p>@ViewBag.ExeptionMessage</p>
+        </div>
+
+        <div class="alert alert-danger">
+            <h5>Exception Trace</h5>
+            <hr />
+            <p>@ViewBag.StackTrace</p>
+        </div>*@
+}
