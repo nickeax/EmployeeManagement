@@ -60,10 +60,10 @@
         }
         else
         {
-            <h5 class="card-header">No roles assigned to this user.</h5>
+            <h5 class="card-header">No <strong>roles</strong> assigned to this user.</h5>
         }
         <div class="card-footer">
-            <a asp-action="EditUsersInRole" asp-controller="Administration" asp-route-userId="@Model.UserId" class="btn btn-primary auto-width" style="width:auto">Manage Roles</a>
+            <a asp-action="ManageUserRoles" asp-route-userId="@Model.UserId" asp-route-userName="@Model.Name" class="btn btn-primary auto-width" style="width:auto">Manage Roles</a>
         </div>
     </div>
     <div class="card">
@@ -82,7 +82,7 @@
         }
         else
         {
-            <h5 class="card-header">No roles assigned to this user.</h5>
+            <h5 class="card-header">No <strong>claims</strong> assigned to this user.</h5>
         }
         <div class="card-footer">
             <a asp-action="EditUsersInRole" asp-controller="Administration" asp-route-userId="@Model.UserId" class="btn btn-primary auto-width" style="width:auto">Manage Claims</a>
