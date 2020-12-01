@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,6 +28,75 @@ namespace EmployeeManagement.Controllers
             _roleManager = roleManager;
             _userManager = userManager;
             _logger = logger;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageUserClaims(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                ViewBag.Error = $"User with Id {userId} cannot be found.";
+                return View("NotFound");
+            }
+
+            var existingUserClaims = await _userManager.GetClaimsAsync(user);
+
+            var model = new UserClaimsViewModel
+            {
+                UserId = userId
+            };
+
+            foreach (var claim in ClaimsStore.AllClaims)
+            {
+                UserClaim userClaim = new UserClaim
+                {
+                    ClaimType = claim.Type
+                };
+
+                if(existingUserClaims.Any(x => x.Type == claim.Type))
+                {
+                    userClaim.IsSelected = true;
+                }
+
+                model.Claims.Add(userClaim);
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManageUserClaims(UserClaimsViewModel model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if (user == null)
+            {
+                ViewBag.Error = $"User with Id {model.UserId} cannot be found.";
+                return View("NotFound");
+            }
+
+            var claims = await _userManager.GetClaimsAsync(user);
+            var result = await _userManager.RemoveClaimsAsync(user, claims);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Cannot remove user existing claims.");
+                return View(model);
+            }
+
+            result = await _userManager.AddClaimsAsync(user, model.Claims.Where(x => x.IsSelected).Select(x => new Claim(x.ClaimType, x.ClaimType)));
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Cannot remove user existing claims.");
+                return View(model);
+            }
+
+
+
+            return RedirectToAction("EditUser", new { Id = model.UserId });
         }
 
         [HttpGet]
@@ -248,7 +318,8 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ManageUserRoles(List<ManageUserRolesViewModel> model, string userId){
+        public async Task<IActionResult> ManageUserRoles(List<ManageUserRolesViewModel> model, string userId)
+        {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {

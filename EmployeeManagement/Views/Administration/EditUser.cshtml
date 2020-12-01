@@ -85,7 +85,7 @@
             <h5 class="card-header">No <strong>claims</strong> assigned to this user.</h5>
         }
         <div class="card-footer">
-            <a asp-action="EditUsersInRole" asp-controller="Administration" asp-route-userId="@Model.UserId" class="btn btn-primary auto-width" style="width:auto">Manage Claims</a>
+            <a asp-action="ManageUserClaims" asp-route-userId="@Model.UserId" class="btn btn-primary auto-width" style="width:auto">Manage Claims</a>
         </div>
     </div>
 </form>
