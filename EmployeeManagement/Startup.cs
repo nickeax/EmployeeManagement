@@ -45,9 +45,9 @@ namespace EmployeeManagement
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("DeleteRolePolicy", policy => policy.RequireClaim("Delete Role"));
-                options.AddPolicy("EditRolePolicy", policy => policy.RequireClaim("Delete Role"));
-                options.AddPolicy("AdminRolePolicy", policy => policy.RequireClaim("Admin"));
+                options.AddPolicy("DeleteRolePolicy", policy => policy.RequireClaim("Delete Role", "true"));
+                options.AddPolicy("EditRolePolicy", policy => policy.RequireClaim("Delete Role", "true"));
+                options.AddPolicy("AdminRolePolicy", policy => policy.RequireClaim("Admin", "true"));
             });
 
             services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
